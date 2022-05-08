@@ -23,7 +23,7 @@ const db = SQLite.openDatabase(
 const createTable = () => {
   db.transaction(tx => {
     tx.executeSql(
-      'CREATE TABLE IF NOT EXISTS cats (ID INTEGER PRIMARY KEY AUTOINCREMENT, ImageURL TEXT, Reaction TEXT)',
+      'CREATE TABLE IF NOT EXISTS cats (ID INTEGER PRIMARY KEY AUTOINCREMENT, ImageURL TEXT UNIQUE, Reaction TEXT)',
     );
   });
 };
@@ -37,6 +37,7 @@ const App = () => {
   const [page, setPage] = useState('main');
 
   const getRandomCat = () => {
+    setImageURL('');
     if (searchString && breeds[searchString.toLowerCase()]) {
       fetch(
         'https://api.thecatapi.com/v1/images/search?breed_ids=' +
@@ -75,7 +76,15 @@ const App = () => {
   }, []);
 
   if (page === 'collection') {
-    return <CollectionPage db={db} goBack={() => setPage('main')} />;
+    return (
+      <CollectionPage
+        db={db}
+        goBack={() => {
+          setPage('main');
+          getRandomCat();
+        }}
+      />
+    );
   }
 
   return (

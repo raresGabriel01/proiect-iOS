@@ -1,9 +1,4 @@
-import {
-  StyleSheet,
-  View,
-  Pressable,
-  Text,
-} from 'react-native';
+import {StyleSheet, View, Pressable, Text} from 'react-native';
 import React from 'react';
 
 const GetCatButton = ({getRandomCat}) => {

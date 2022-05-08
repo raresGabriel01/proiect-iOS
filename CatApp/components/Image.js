@@ -1,10 +1,4 @@
-import {
-  StyleSheet,
-  View,
-  Image,
-  Text,
-  Pressable,
-} from 'react-native';
+import {StyleSheet, View, Image, Text, Pressable} from 'react-native';
 import React, {useState, useEffect} from 'react';
 
 const ImageComponent = ({imageURL, db}) => {
@@ -55,12 +49,16 @@ const ImageComponent = ({imageURL, db}) => {
 
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.image}
-        source={{
-          uri: imageLink,
-        }}
-      />
+      {imageLink === '' ? (
+        <Text>Loading...</Text>
+      ) : (
+        <Image
+          style={styles.image}
+          source={{
+            uri: imageLink,
+          }}
+        />
+      )}
       <View style={styles.reactionWrapper}>
         <Pressable
           style={reaction === 'laugh' ? styles.pressedIcon : styles.icon}
