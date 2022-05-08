@@ -1,7 +1,7 @@
 import {TextInput, StyleSheet, View, Image, SafeAreaView, Text, Pressable} from 'react-native';
 import React, { useState, useEffect } from 'react';
 
-const ImageComponent = ({imageURL}) => {
+const ImageComponent = ({imageURL, db}) => {
     const [reaction, setReaction] = useState('');
     const [imageLink, setImageLink] = useState(imageURL);
     
@@ -10,10 +10,35 @@ const ImageComponent = ({imageURL}) => {
         setReaction('');
     }, [imageURL])
 
+    const deleteCat = async (imageURL) => {
+        await db.transaction(async tx => {
+          await tx.executeSql("DELETE FROM cats WHERE ImageURL = ?", [imageURL])
+        })
+      }
+      
+      const updateCat = async (imageURL, newReaction) => {
+        await db.transaction(async tx => {
+          await tx.executeSql("UPDATE cats SET Reaction = ? WHERE ImageURL = ?", [newReaction, imageURL]);
+        })
+      }
+
+      const insertCat = async (url, reaction) => {
+        console.log('inserez', url, reaction)
+        await db.transaction(async tx => {
+          await tx.executeSql("INSERT INTO cats (ImageURL, Reaction) VALUES (?, ?)", [url, reaction])
+        })
+      }
+
     const handlePress = (reactionType) => () => {
-        if (reaction === reactionType) {
+        if (reaction === '') {
+            insertCat(imageURL, reactionType)
+            setReaction(reactionType);
+        }
+        else if (reaction === reactionType) {
+            deleteCat(imageURL)
             setReaction('');
         } else {
+            updateCat(imageURL, reactionType)
             setReaction(reactionType);
         }
 

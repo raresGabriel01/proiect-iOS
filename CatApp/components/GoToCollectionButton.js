@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 const GoToCollectionButton = ({goToCollection}) => {
     return (
         <View style={styles.container}>
-            <Pressable style={styles.button} onPress={() => goToCollection()} title ="Get a random cat image">
+            <Pressable style={styles.button} onPress={goToCollection} title ="Get a random cat image">
                 <Text style={styles.text}>Go to your collection</Text>
             </Pressable>
         </View>

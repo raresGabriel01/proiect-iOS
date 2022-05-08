@@ -20,12 +20,31 @@ import {
   Button,
 } from 'react-native';
 
+import SQLite from 'react-native-sqlite-storage';
+
+const db = SQLite.openDatabase({
+  name: 'MainDB',
+  location:'default',
+
+},
+() => {},
+error => console.log(error)
+)
+
+const createTable = () => {
+  db.transaction(tx => {
+    tx.executeSql("CREATE TABLE IF NOT EXISTS cats (ID INTEGER PRIMARY KEY AUTOINCREMENT, ImageURL TEXT, Reaction TEXT)");
+  })
+}
+
+
 
 import HeaderComponent from './components/Header';
 import SearchBar from './components/SearchBar';
 import ImageComponent from './components/Image';
 import GetCatButton from './components/GetCatButton';
 import GoToCollectionButton from './components/GoToCollectionButton';
+import CollectionPage from './components/CollectionPage';
 
 const App = () => {
 
@@ -58,7 +77,6 @@ const App = () => {
       json.forEach(breed => {
         fetchedBreeds[breed.name.toLowerCase()] = breed.id;
       });
-      console.log(fetchedBreeds);
       setBreeds(fetchedBreeds);
     })
     .catch((error) => console.error(error))
@@ -67,14 +85,22 @@ const App = () => {
   useEffect( () => {
     getBreeds();
     getRandomCat();
+    createTable();
   }, [])
 
+  if (page === 'collection') {
+    console.log('pampam');
+    return (<CollectionPage db={db} goBack={() => setPage('main')}/>)
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <HeaderComponent />
       <SearchBar error={!breeds[searchString.toLowerCase()]} searchString={searchString} setSearchString={setSearchString} />
-      <ImageComponent imageURL={imageURL}/>
+      <ImageComponent 
+        imageURL={imageURL}
+        db={db}
+      />
       <GetCatButton getRandomCat={getRandomCat}/>
       <GoToCollectionButton goToCollection={() => {setPage('collection')}}/>
       
