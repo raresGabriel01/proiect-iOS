@@ -12,6 +12,7 @@ import GoToCollectionButton from './components/GoToCollectionButton';
 import CollectionPage from './components/CollectionPage';
 
 const db = SQLite.openDatabase(
+  // creating a database
   {
     name: 'MainDB',
     location: 'default',
@@ -21,6 +22,7 @@ const db = SQLite.openDatabase(
 );
 
 const createTable = () => {
+  // creating table
   db.transaction(tx => {
     tx.executeSql(
       'CREATE TABLE IF NOT EXISTS cats (ID INTEGER PRIMARY KEY AUTOINCREMENT, ImageURL TEXT UNIQUE, Reaction TEXT)',
@@ -36,9 +38,12 @@ const App = () => {
   const [breeds, setBreeds] = useState({});
   const [page, setPage] = useState('main');
 
+  // states representing the states of the app
+
   const getRandomCat = () => {
     setImageURL('');
     if (searchString && breeds[searchString.toLowerCase()]) {
+      // if we have a valid search string then we are going to get a cat of a certain breed
       fetch(
         'https://api.thecatapi.com/v1/images/search?breed_ids=' +
           breeds[searchString.toLowerCase()],
@@ -49,6 +54,7 @@ const App = () => {
         })
         .catch(error => console.error(error));
     } else {
+      // otherwise just a random catto
       fetch('https://api.thecatapi.com/v1/images/search')
         .then(response => response.json())
         .then(json => setImageURL(json[0].url))
@@ -57,6 +63,7 @@ const App = () => {
   };
 
   const getBreeds = () => {
+    // this will get us all the breeds and will be placed into the 'breeds' state
     fetch('https://api.thecatapi.com/v1/breeds')
       .then(response => response.json())
       .then(json => {
@@ -73,9 +80,10 @@ const App = () => {
     getBreeds();
     getRandomCat();
     createTable();
-  }, []);
+  }, []); // execute this after the component first mounts
 
   if (page === 'collection') {
+    // conditional rendering to display the collection page.
     return (
       <CollectionPage
         db={db}
@@ -88,6 +96,7 @@ const App = () => {
   }
 
   return (
+    // the main page
     <SafeAreaView style={styles.container}>
       <HeaderComponent />
       <SearchBar

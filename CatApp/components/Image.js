@@ -11,12 +11,14 @@ const ImageComponent = ({imageURL, db}) => {
   }, [imageURL]);
 
   const deleteCat = async imageURL => {
+    // db call for deletion when we uncheck a reaction
     await db.transaction(async tx => {
       await tx.executeSql('DELETE FROM cats WHERE ImageURL = ?', [imageURL]);
     });
   };
 
   const updateCat = async (imageURL, newReaction) => {
+    // db call for updating when we change our reaction
     await db.transaction(async tx => {
       await tx.executeSql('UPDATE cats SET Reaction = ? WHERE ImageURL = ?', [
         newReaction,
@@ -26,6 +28,7 @@ const ImageComponent = ({imageURL, db}) => {
   };
 
   const insertCat = async (url, reaction) => {
+    // db call for inserting when we first react to a cat pic
     await db.transaction(async tx => {
       await tx.executeSql(
         'INSERT INTO cats (ImageURL, Reaction) VALUES (?, ?)',
@@ -35,6 +38,7 @@ const ImageComponent = ({imageURL, db}) => {
   };
 
   const handlePress = reactionType => () => {
+    // using the wonders of functional programming to call the corresponding db function
     if (reaction === '') {
       insertCat(imageURL, reactionType);
       setReaction(reactionType);
@@ -48,6 +52,7 @@ const ImageComponent = ({imageURL, db}) => {
   };
 
   return (
+    // component
     <View style={styles.container}>
       {imageLink === '' ? (
         <Text>Loading...</Text>

@@ -15,12 +15,14 @@ const CollectionPage = ({goBack, db}) => {
   const [myCats, setMyCats] = useState([]);
 
   const deleteCat = imageURL => {
+    // db call for deletion
     db.transaction(async tx => {
       tx.executeSql('DELETE FROM cats WHERE ImageURL = ?', [imageURL]);
     });
   };
 
   const getReactionCats = reaction => {
+    // db call for getting all the cats with a certain reaction
     db.transaction(async tx => {
       tx.executeSql(
         'SELECT * FROM cats WHERE reaction = ?',
@@ -41,6 +43,7 @@ const CollectionPage = ({goBack, db}) => {
   };
 
   const getAllCats = () => {
+    // db call to get all the cats (regardless of reaction)
     db.transaction(tx => {
       tx.executeSql('SELECT Reaction, ImageURL FROM cats', [], (tx, res) => {
         let newCats = [];
@@ -57,26 +60,60 @@ const CollectionPage = ({goBack, db}) => {
     });
   };
 
+  const updateCat = (imageURL, newReaction) => () => {
+    // db call to update catto (when moving from one reaction to another)
+    const newCats = [...myCats].filter(cat => cat.url != imageURL);
+    setMyCats([...newCats]);
+    db.transaction(async tx => {
+      tx.executeSql('UPDATE cats SET Reaction = ? WHERE ImageURL = ?', [
+        newReaction,
+        imageURL,
+      ]);
+    });
+  };
+
   useEffect(() => {
     getAllCats();
   }, []);
 
   const renderCatImage = ({item}) => {
+    // used to render our template
     return (
       <View style={styles.imageView}>
         <Image style={styles.image} source={{uri: item.url}} />
-        <Pressable
-          onPress={() => {
-            deleteCat(item.url);
-            setMyCats(myCats.filter(cat => cat.url !== item.url));
-          }}>
-          <Text>&#x274C;</Text>
-        </Pressable>
+        <View style={styles.buttonWrap}>
+          <Pressable
+            onPress={() => {
+              deleteCat(item.url);
+              setMyCats(myCats.filter(cat => cat.url !== item.url));
+            }}>
+            <Text>&#x274C;</Text>
+          </Pressable>
+          {reactionPage === 'all' ? (
+            <>
+              <Pressable onPress={updateCat(item.url, 'laugh')}>
+                <Text>&#128516;</Text>
+              </Pressable>
+              <Pressable onPress={updateCat(item.url, 'heart')}>
+                <Text>&#128151;</Text>
+              </Pressable>
+            </>
+          ) : reactionPage === 'laugh' ? (
+            <Pressable onPress={updateCat(item.url, 'heart')}>
+              <Text>&#128151;</Text>
+            </Pressable>
+          ) : (
+            <Pressable onPress={updateCat(item.url, 'laugh')}>
+              <Text>&#128516;</Text>
+            </Pressable>
+          )}
+        </View>
       </View>
     );
   };
 
   return (
+    // component
     <SafeAreaView style={styles.container}>
       <Pressable onPress={goBack} style={styles.button}>
         <Text style={styles.text}>Go back</Text>
@@ -154,6 +191,9 @@ const styles = StyleSheet.create({
     alignContent: 'space-around',
     justifyContent: 'space-around',
     alignItems: 'center',
+  },
+  buttonWrap: {
+    flexDirection: 'row',
   },
 });
 
