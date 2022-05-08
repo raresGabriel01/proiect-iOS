@@ -20,7 +20,7 @@ Daca doresti sa primesti o poza cu o pisica dintr-o rasa specifica, poti utiliza
 
 2. Apelarea unui API. Am folosit TheCatAPI unde am apelat doua end-point-uri: unul pentru a obtine o poza cu o pisica random si unul pentru a obtine toate rasele de pisici (folosesc cel de al doilea call pentru a determina daca utilizatorul a introdus o rasa de pisica existenta)
 
-3. Implementare UICOllectionView. Am utilizat <FlatList />, echivalentul in React-Native.
+3. Implementare UICOllectionView. Am utilizat ```<Flatlist />```, echivalentul in React-Native.
 
 4. Clean code. Am structurat componentele de UI in componente de React-Native asa incat structura sa fie usor de inteles, minimalizand numarul de props transmise intre componente. De asemenea, am utilizat .prettier pentru a aranja codul si am adaugat comentarii relevante.
 
