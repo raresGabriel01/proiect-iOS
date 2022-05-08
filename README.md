@@ -1,4 +1,4 @@
-# proiect-iOS: Cat-Mani
+# proiect-iOS: Cat-Mania
 
 # Cum instalez ?
 
